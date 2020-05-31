@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "magisterij",
+  "private_key_id": "6d3594ec69ea6eefc79b8c8dd0f0c8955e70b4dd",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDBLl5kxGfDhIZF\nZLGluSemjIf3QoOvM3v4XU0cR0azGYCa2KJd7t29G4nOJ0oQcTsier8D3QTTSrJz\n4PjzOpPLKIY/IsfHJ/mQPECk0meo0j6ZUF+FhrN2K9fb7AR6wypjMAK97kQu5hM1\nCOyhQybyYlLXr7MJzP/JCClWY1eYcVYUziRhggwoiQOnXwqTwOCQdB3GwahMrCQv\nj+ZEOXCs4wtYnqif64T85dFqo9uvs6hD2Xyfk5/SgN08FdlE+m4PcZ605QcQOlIJ\nHWzCM9oAr8XRI/K6UEsOu8TUl6m1B+1tywlQxmAGHkieZNisqzSz0On6sATMZrSd\nIdvp+EBNAgMBAAECggEAEcRdeyATOQi5vq0dp5PJYUiAgs2zxcvS5YtTObwWdQdt\n7A/rkv8Slr9vI646Yhu/6BJo+gZ8WKCAnCa/TsN+70rpWeotfJQhIFJiUaZmUUEQ\n79HUDzhNzhsHLdtdqBrGDbxPLD+7NqMDdje9Z7GA5f8EBoFK0qZvigI9pwvY9RSi\ngJLFHliGVkWlCsuYZUwbfIm4/jGBuD9kNi47yCeqJi0adczjQmrcpXC/KDPih3+i\n3ndGrBZ4EXHmvF2V073M8SYZ+2egTT8AcAQeI06K+YtYs56Oi1QG1obpds+iaaAe\n/CnJcvJJDWEnUT3iFjqSYZMEAYe99uOqsKvYsjMeEwKBgQDhlc1/fenij2Hv7lwT\nZdXyZbh2cBkqgajYBycr2wuWM5KgPJiyxra0ghHQwskGzLxigo/bC6nNq67nRroi\nna52MJzNUMECSMrEW6uaAdGYdFjkG2aQ+5ATwScF3XonQ5WlAReL7dcSlam3hEBi\nCpI35mByL64pfJvuf4WsdJI69wKBgQDbOh9iu+XxND1s2k3FmQ2eL5vBgTyCj3Dw\n0ZlBB9Xm96hZ09PMYgDjv86lnnzqh/D+A/ZmwoU4Jt0qa9dtHt8Kfx5qlmFnNp1U\nmCnuzrXfGCow0MMhPCrrfP2Lxu01map9auffzjAX9cQmpoZur6kiAHPcvztinzWL\njbwQ9jPp2wKBgQDR4d2rY8wqxbqaUAwM5C+1cly4nT1c5fvg2m7gh9F08xDV0utD\nUk0FDwtiTwhYMj6H7O/JHkXjHHwDpDNkJ479WedZw2uAI5e8L4ouJMkMbhuSR8ga\n1mNLbedPtquDQodFWQm+YBA9s0+PdhWs4ib+qXJMav5AjTZLJQyK0n6HKwKBgQCT\nE6t60hSyfhm3rb3/k29PcSFN8SZncVSUPApVVqxrCDwqB7NQq29tXIGHG40yy4Ei\n6gWla1t1EJ3QmAkvbEa3BBGj8L/oPvvOhUecr5HU2qFznptK8NLaqkBwRkVecHmx\nKsflnq8lY/z08UO/fpo59ZPFxYZR4/5IYg6KUqMBgQKBgH0VvMlLCps48Yy6z1At\n+fuHPEsAjm2G4AkuFnaInl1DdhFibzRvz8og/UhIThh1j9Fu+Ffy+35AOr9hKkcb\n6Ss+PJYX2KKeZCx2E0FhuWJJhuFvh6coTfBTF3jDUkcteLssMKAT1LMlfEXfscGg\nge5qcbsRnExvnbM6G85J7Mwf\n-----END PRIVATE KEY-----\n",
+  "client_email": "video-intelligence@magisterij.iam.gserviceaccount.com",
+  "client_id": "115039551671533872329",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/video-intelligence%40magisterij.iam.gserviceaccount.com"
+}
