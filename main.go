@@ -1,22 +1,14 @@
-
-// Sample video_quickstart uses the Google Cloud Video Intelligence API to label a video.
 package main
 
 import (
-	"context"
 	"crypto/tls"
-	"fmt"
+	"github.com/heptiolabs/healthcheck"
 	"github.com/joho/godotenv"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 	"video-analysis-worker/Models"
 	Worker "video-analysis-worker/worker"
-
-	"github.com/golang/protobuf/ptypes"
-
-	video "cloud.google.com/go/videointelligence/apiv1"
-	videopb "google.golang.org/genproto/googleapis/cloud/videointelligence/v1"
 )
 
 func init() {
@@ -28,70 +20,17 @@ func init() {
 
 func main() {
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	// env := Models.GetEnvStruct()
+	env := Models.GetEnvStruct()
+	health := healthcheck.NewHandler()
+
+	health.AddLivenessCheck("aws-service-check-url: " + Models.GetEnvStruct().AwsStorageUrl + "health", healthcheck.HTTPGetCheck(Models.GetEnvStruct().AwsStorageUrl + "health", 5*time.Second))
+	health.AddLivenessCheck("media-metadata: " + env.MediaMetadataGrpcServer + ":" + env.MediaMetadataGrpcPort, healthcheck.TCPDialCheck(env.MediaMetadataGrpcServer + ":" + env.MediaMetadataGrpcPort, 5*time.Second))
+	health.AddLivenessCheck("rabbit-mq: " + env.RabbitHost + ":" + env.RabbitPort, healthcheck.TCPDialCheck(env.RabbitHost + ":" + env.RabbitPort, 5*time.Second))
+
+	go http.ListenAndServe("0.0.0.0:8888", health)
 
 	worker := Worker.InitWorker()
 	defer worker.RabbitMQ.Conn.Close()
 	defer worker.RabbitMQ.Ch.Close()
 	worker.Work()
-	// fmt.Println("labels")
-	// _ = label("sample.mp4")
-}
-
-func label(file string) ([]string,  error) {
-	labelsStringArray := []string{}
-	ctx := context.Background()
-	client, err := video.NewClient(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("video.NewClient: %v", err)
-	}
-
-	fileBytes, err := ioutil.ReadFile(file)
-	if err != nil {
-		return nil, err
-	}
-
-	op, err := client.AnnotateVideo(ctx, &videopb.AnnotateVideoRequest{
-		Features: []videopb.Feature{
-			videopb.Feature_LABEL_DETECTION,
-		},
-		InputContent: fileBytes,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("AnnotateVideo: %v", err)
-	}
-
-	resp, err := op.Wait(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("Wait: %v", err)
-	}
-
-	printLabels := func(labels []*videopb.LabelAnnotation) {
-		for _, label := range labels {
-			fmt.Printf( "\tDescription: %s\n", label.Entity.Description)
-			labelsStringArray = append(labelsStringArray, label.Entity.Description)
-			for _, category := range label.CategoryEntities {
-				fmt.Printf("\t\tCategory: %s\n", category.Description)
-				labelsStringArray = append(labelsStringArray, category.Description)
-			}
-			for _, segment := range label.Segments {
-				start, _ := ptypes.Duration(segment.Segment.StartTimeOffset)
-				end, _ := ptypes.Duration(segment.Segment.EndTimeOffset)
-				fmt.Printf("\t\tSegment: %s to %s\n", start, end)
-				fmt.Printf("\tConfidence: %v\n", segment.Confidence)
-			}
-		}
-	}
-
-	// A single video was processed. Get the first result.
-	result := resp.AnnotationResults[0]
-
-	fmt.Printf("SegmentLabelAnnotations:")
-	printLabels(result.SegmentLabelAnnotations)
-	fmt.Printf( "ShotLabelAnnotations:")
-	printLabels(result.ShotLabelAnnotations)
-	fmt.Printf( "FrameLabelAnnotations:")
-	printLabels(result.FrameLabelAnnotations)
-
-	return labelsStringArray, nil
 }
