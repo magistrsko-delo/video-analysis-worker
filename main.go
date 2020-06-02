@@ -4,8 +4,14 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
+	"github.com/joho/godotenv"
 	"io/ioutil"
+	"log"
+	"net/http"
+	"video-analysis-worker/Models"
+	Worker "video-analysis-worker/worker"
 
 	"github.com/golang/protobuf/ptypes"
 
@@ -13,61 +19,36 @@ import (
 	videopb "google.golang.org/genproto/googleapis/cloud/videointelligence/v1"
 )
 
-func main() {
-	/*ctx := context.Background()
-
-	// Creates a client.
-	client, err := video.NewClient(ctx)
-	if err != nil {
-		log.Fatalf("Failed to create client: %v", err)
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Print("No .env file found")
 	}
-
-	op, err := client.AnnotateVideo(ctx, &videopb.AnnotateVideoRequest{
-		InputUri: "gs://cloud-samples-data/video/cat.mp4",
-		Features: []videopb.Feature{
-			videopb.Feature_LABEL_DETECTION,
-		},
-	})
-	if err != nil {
-		log.Fatalf("Failed to start annotation job: %v", err)
-	}
-
-	resp, err := op.Wait(ctx)
-	if err != nil {
-		log.Fatalf("Failed to annotate: %v", err)
-	}
-
-	// Only one video was processed, so get the first result.
-	// fmt.Println(resp.GetAnnotationResults())
-	result := resp.GetAnnotationResults()[0]
-	for _, annotation := range result.SegmentLabelAnnotations {
-		fmt.Printf("Description: %s\n", annotation.Entity.Description)
-
-		for _, category := range annotation.CategoryEntities {
-			fmt.Printf("\tCategory: %s\n", category.Description)
-		}
-
-		for _, segment := range annotation.Segments {
-			start, _ := ptypes.Duration(segment.Segment.StartTimeOffset)
-			end, _ := ptypes.Duration(segment.Segment.EndTimeOffset)
-			fmt.Printf("\tSegment: %s to %s\n", start, end)
-			fmt.Printf("\tConfidence: %v\n", segment.Confidence)
-		}
-	}*/
-
-	_ = label("sample.mp4")
+	Models.InitEnv()
 }
 
-func label(file string) error {
+func main() {
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	// env := Models.GetEnvStruct()
+
+	worker := Worker.InitWorker()
+	defer worker.RabbitMQ.Conn.Close()
+	defer worker.RabbitMQ.Ch.Close()
+	worker.Work()
+	// fmt.Println("labels")
+	// _ = label("sample.mp4")
+}
+
+func label(file string) ([]string,  error) {
+	labelsStringArray := []string{}
 	ctx := context.Background()
 	client, err := video.NewClient(ctx)
 	if err != nil {
-		return fmt.Errorf("video.NewClient: %v", err)
+		return nil, fmt.Errorf("video.NewClient: %v", err)
 	}
 
 	fileBytes, err := ioutil.ReadFile(file)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	op, err := client.AnnotateVideo(ctx, &videopb.AnnotateVideoRequest{
@@ -77,19 +58,21 @@ func label(file string) error {
 		InputContent: fileBytes,
 	})
 	if err != nil {
-		return fmt.Errorf("AnnotateVideo: %v", err)
+		return nil, fmt.Errorf("AnnotateVideo: %v", err)
 	}
 
 	resp, err := op.Wait(ctx)
 	if err != nil {
-		return fmt.Errorf("Wait: %v", err)
+		return nil, fmt.Errorf("Wait: %v", err)
 	}
 
 	printLabels := func(labels []*videopb.LabelAnnotation) {
 		for _, label := range labels {
 			fmt.Printf( "\tDescription: %s\n", label.Entity.Description)
+			labelsStringArray = append(labelsStringArray, label.Entity.Description)
 			for _, category := range label.CategoryEntities {
 				fmt.Printf("\t\tCategory: %s\n", category.Description)
+				labelsStringArray = append(labelsStringArray, category.Description)
 			}
 			for _, segment := range label.Segments {
 				start, _ := ptypes.Duration(segment.Segment.StartTimeOffset)
@@ -110,5 +93,5 @@ func label(file string) error {
 	fmt.Printf( "FrameLabelAnnotations:")
 	printLabels(result.FrameLabelAnnotations)
 
-	return nil
+	return labelsStringArray, nil
 }
