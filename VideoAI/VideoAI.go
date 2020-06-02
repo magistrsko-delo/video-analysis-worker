@@ -12,6 +12,7 @@ type VideoAI struct {
 }
 
 func (videoAI *VideoAI) Label(file string) ([]string, error) {
+	fmt.Println("LABELS: ")
 	labelsStringArray := []string{}
 	ctx := context.Background()
 	client, err := video.NewClient(ctx)
@@ -41,10 +42,10 @@ func (videoAI *VideoAI) Label(file string) ([]string, error) {
 
 	printLabels := func(labels []*videopb.LabelAnnotation) {
 		for _, label := range labels {
-			// fmt.Printf( "\tDescription: %s\n", label.Entity.Description)
+			fmt.Printf( "\tDescription: %s\n", label.Entity.Description)
 			labelsStringArray = append(labelsStringArray, label.Entity.Description)
 			for _, category := range label.CategoryEntities {
-				// fmt.Printf("\t\tCategory: %s\n", category.Description)
+				fmt.Printf("\t\tCategory: %s\n", category.Description)
 				labelsStringArray = append(labelsStringArray, category.Description)
 			}
 			/*for _, segment := range label.Segments {
@@ -59,11 +60,11 @@ func (videoAI *VideoAI) Label(file string) ([]string, error) {
 	// A single video was processed. Get the first result.
 	result := resp.AnnotationResults[0]
 
-	// fmt.Printf("SegmentLabelAnnotations:")
+	fmt.Printf("SegmentLabelAnnotations:")
 	printLabels(result.SegmentLabelAnnotations)
-	// fmt.Printf( "ShotLabelAnnotations:")
+	fmt.Printf( "ShotLabelAnnotations:")
 	printLabels(result.ShotLabelAnnotations)
-	// fmt.Printf( "FrameLabelAnnotations:")
+	fmt.Printf( "FrameLabelAnnotations:")
 	printLabels(result.FrameLabelAnnotations)
 
 	return labelsStringArray, nil
