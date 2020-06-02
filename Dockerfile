@@ -9,6 +9,9 @@ ENV GO111MODULE=on \
     GOOS=linux \
     GOARCH=amd64
 
+VOLUME $GOOGLE_APPLICATION_CREDENTIALS:magisterij-6d3594ec69ea.json:ro
+ENV GOOGLE_APPLICATION_CREDENTIALS=magisterij-6d3594ec69ea.json
+
 WORKDIR /build
 
 COPY go.mod .
@@ -24,6 +27,6 @@ RUN cp /build/main .
 COPY .live.env .
 RUN cp .live.env .env && mkdir assets && mkdir assets/chunks
 COPY magisterij-6d3594ec69ea.json .
-RUN export GOOGLE_APPLICATION_CREDENTIALS="magisterij-6d3594ec69ea.json"
+# RUN export GOOGLE_APPLICATION_CREDENTIALS="magisterij-6d3594ec69ea.json"
 
 CMD ["/dist/main"]
