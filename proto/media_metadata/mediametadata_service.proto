@@ -14,6 +14,13 @@ service MediaMetadata {
   rpc getMediasInProgress(google.protobuf.Empty) returns(MediaMetadataResponseRepeated){}
 
   rpc deleteMedia(GetMediaMetadataRequest) returns(StatusResponse1);
+
+  rpc updateMediaKeywords(UpdateMediaKeywords) returns(MediaMetadataResponse) {};
+}
+
+message UpdateMediaKeywords {
+  int32 mediaId = 1;
+  repeated string keywords = 2;
 }
 
 message CreateNewMediaMetadataRequest {

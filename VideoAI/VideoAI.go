@@ -4,15 +4,12 @@ import (
 	video "cloud.google.com/go/videointelligence/apiv1"
 	"context"
 	"fmt"
-	"github.com/golang/protobuf/ptypes"
 	videopb "google.golang.org/genproto/googleapis/cloud/videointelligence/v1"
 	"io/ioutil"
 )
 
 type VideoAI struct {
-
 }
-
 
 func (videoAI *VideoAI) Label(file string) ([]string, error) {
 	labelsStringArray := []string{}
@@ -44,29 +41,29 @@ func (videoAI *VideoAI) Label(file string) ([]string, error) {
 
 	printLabels := func(labels []*videopb.LabelAnnotation) {
 		for _, label := range labels {
-			fmt.Printf( "\tDescription: %s\n", label.Entity.Description)
+			// fmt.Printf( "\tDescription: %s\n", label.Entity.Description)
 			labelsStringArray = append(labelsStringArray, label.Entity.Description)
 			for _, category := range label.CategoryEntities {
-				fmt.Printf("\t\tCategory: %s\n", category.Description)
+				// fmt.Printf("\t\tCategory: %s\n", category.Description)
 				labelsStringArray = append(labelsStringArray, category.Description)
 			}
-			for _, segment := range label.Segments {
+			/*for _, segment := range label.Segments {
 				start, _ := ptypes.Duration(segment.Segment.StartTimeOffset)
 				end, _ := ptypes.Duration(segment.Segment.EndTimeOffset)
 				fmt.Printf("\t\tSegment: %s to %s\n", start, end)
 				fmt.Printf("\tConfidence: %v\n", segment.Confidence)
-			}
+			}*/
 		}
 	}
 
 	// A single video was processed. Get the first result.
 	result := resp.AnnotationResults[0]
 
-	fmt.Printf("SegmentLabelAnnotations:")
+	// fmt.Printf("SegmentLabelAnnotations:")
 	printLabels(result.SegmentLabelAnnotations)
-	fmt.Printf( "ShotLabelAnnotations:")
+	// fmt.Printf( "ShotLabelAnnotations:")
 	printLabels(result.ShotLabelAnnotations)
-	fmt.Printf( "FrameLabelAnnotations:")
+	// fmt.Printf( "FrameLabelAnnotations:")
 	printLabels(result.FrameLabelAnnotations)
 
 	return labelsStringArray, nil

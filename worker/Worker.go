@@ -31,12 +31,12 @@ func (worker *Worker) Work()  {
 				log.Println(err)
 			}
 
-			fmt.Println(rabbiMQMessageAnalysis)
+			// fmt.Println(rabbiMQMessageAnalysis)
 			mediaMetadata, err := worker.mediaMetadataGrpcClient.GetMediaMetadata(rabbiMQMessageAnalysis.MediaId)
 			if err != nil{
 				log.Println(err)
 			}
-			fmt.Println(mediaMetadata)
+			// fmt.Println(mediaMetadata)
 
 			fileUrl := worker.env.AwsStorageUrl + "v1/awsStorage/media/" + mediaMetadata.AwsBucketWholeMedia + "/" + mediaMetadata.AwsStorageNameWholeMedia
 			err = worker.mediaDowLoader.DownloadFile("./assets/" + mediaMetadata.AwsStorageNameWholeMedia, fileUrl)
@@ -47,8 +47,17 @@ func (worker *Worker) Work()  {
 			if err != nil {
 				log.Println(err)
 			}
-			fmt.Println()
-			fmt.Println(labelsStringArray)
+			// fmt.Println()
+			// fmt.Println(labelsStringArray)
+
+			_, err = worker.mediaMetadataGrpcClient.UpdateMediaKeywords(mediaMetadata.MediaId, labelsStringArray)
+
+			if err != nil{
+				log.Println(err)
+			}
+			// fmt.Println(updatedMetadata)
+
+			worker.removeFile("./assets/" + mediaMetadata.AwsStorageNameWholeMedia)
 
 			log.Printf("Done")
 			_ = d.Ack(false)

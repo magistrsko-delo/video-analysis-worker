@@ -28,6 +28,19 @@ func (mediaMetadataClient *MediaMetadataClient) GetMediaMetadata(mediaId int) (*
 	return response, nil
 }
 
+func (mediaMetadataClient *MediaMetadataClient) UpdateMediaKeywords(mediaId int32, keywords []string) (*pbMediaMetadata.MediaMetadataResponse, error)  {
+
+	response, err := mediaMetadataClient.client.UpdateMediaKeywords(context.Background(), &pbMediaMetadata.UpdateMediaKeywords{
+		MediaId:              mediaId,
+		Keywords:             keywords,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
 
 func InitMediaMetadataGrpcClient() *MediaMetadataClient  {
 	env := Models.GetEnvStruct()
