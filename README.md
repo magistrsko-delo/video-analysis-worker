@@ -9,9 +9,11 @@
 ## Worker example message
 
 ```
-{
-"mediaId": 36
-}
+{"mediaId":7}
+
+{"mediaId":10}
+
+{"mediaId":12}
 ```
 
 ##PROTOCOL BUFFER
